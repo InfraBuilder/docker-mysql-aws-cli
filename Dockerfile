@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mysql:8
 RUN	apt-get update \
 	&& apt-get install -y \
 		python3-pip \

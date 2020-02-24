@@ -1,2 +1,2 @@
 # docker-mysql-aws-cli
-Command line clients for MySQL 5.7 and AWS 
+Command line clients for MySQL 8 and AWS 
