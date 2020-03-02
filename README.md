@@ -23,7 +23,7 @@ docker run -it --rm infrabuilder/mysql-aws-cli:mysql-8 bash
 docker run -it --rm infrabuilder/mysql-aws-cli:mysql-5.7 bash
 ```
 
-## Configuration by env var
+## Configuration by env var
 
 You can configure your AWS access with env variables (as in [Official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)) :
 
