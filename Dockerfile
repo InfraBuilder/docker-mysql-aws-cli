@@ -8,6 +8,8 @@ RUN	apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+COPY ibd-mysqldump-innodb-to-s3 /usr/local/bin/
+
 ENV	AWS_ACCESS_KEY_ID="" \
 	AWS_SECRET_ACCESS_KEY="" \
 	AWS_DEFAULT_REGION="" \
