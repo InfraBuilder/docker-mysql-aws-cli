@@ -45,3 +45,27 @@ docker run -it --rm \
     infrabuilder/mysql-aws-cli:mysql-8 bash
 ```
 
+## How to use the dump to s3 script
+
+Set env vars :
+
+| Env Variable                  | Description                                                  |
+| ----------------------------- | ------------------------------------------------------------ |
+| DATABASES                     | Space separated database name list                           |
+| BACKUP_DIR                    | Directory where local backup will be stored                  |
+| PREFIX                        | Prefix for backup files                                      |
+| S3_URL                        | URL to s3 folder where backup will be uploaded (s3://bucket/path) |
+| AWS_ACCESS_KEY_ID             | Access key (Ex:  `AKIAIOSFODNN7EXAMPLE`)                     |
+| AWS_SECRET_ACCESS_KEY         | Secret key (Ex: `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`)  |
+| AWS_DEFAULT_REGION            | Default aws region (Ex: `eu-west-3`, cf [Available regions](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html)) |
+| AWS_DEFAULT_OUTPUT            | Default output (Ex: `json`)                                  |
+| MYSQL_HOST                    | MySQL Host                                                   |
+| MYSQL_USER and MYSQL_PASSWORD | Credentials to connect to MySQL                              |
+| MYSQL_ROOT_PASSWORD           | If set, MYSQL_USER will be automatically set to `root`       |
+
+And start : 
+
+```bash
+ibd-mysqldump-innodb-to-s3
+```
+

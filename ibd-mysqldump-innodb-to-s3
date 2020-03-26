@@ -1,0 +1,46 @@
+#!/bin/bash
+
+function loginfo { echo "$(date "+%Y-%m-%d %H:%M:%S") [INFO] $@"; }
+function fatal { echo "$(date "+%Y-%m-%d %H:%M:%S") [ERROR] $@" >&2 ; exit 1; }
+
+BACKUP_DIR=${BACKUP_DIR:-.}
+
+if [ "$MYSQL_ROOT_PASSWORD" != "" ]
+then
+	MYSQL_USER=root
+	MYSQL_PASSWORD="$MYSQL_ROOT_PASSWORD"
+fi
+
+
+MISSING_VARS=""
+for i in BACKUP_DIR DATABASES PREFIX MYSQL_HOST MYSQL_USER MYSQL_PASSWORD S3_URL
+do
+	[ "${!i}" = "" ] && MISSING_VARS="$MISSING_VARS $i"
+done
+[ "$MISSING_VARS" != "" ] &&  fatal "Missing env var : $MISSING_VARS"
+
+NOW="$(date +%Y%m%d-%Hh%M)"
+shift
+
+for DB in $DATABASES
+do
+	BACKUPFILE="$PREFIX-$DB-$NOW.sql.gz"
+
+	loginfo "Starting backup database $DB to $BACKUPFILE"
+	mysqldump \
+		-h "$MYSQL_HOST" \
+		-u "$MYSQL_USER" \
+		"-p$MYSQL_PASSWORD" \
+		--single-transaction \
+		"$DB" \
+		| gzip > "${BACKUP_DIR}/${BACKUPFILE}"
+
+	loginfo "Hashing backup $BACKUPFILE for database $DB"
+	md5sum "${BACKUP_DIR}/${BACKUPFILE}" > "${BACKUP_DIR}/${BACKUPFILE}.md5"
+
+	loginfo "Sending backup $BACKUPFILE for database $DB"
+	aws s3 cp "${BACKUP_DIR}/${BACKUPFILE}" "$S3_URL" --only-show-errors
+	aws s3 cp "${BACKUP_DIR}/${BACKUPFILE}.md5" "$S3_URL" --only-show-errors
+
+	loginfo "Finished backup $BACKUPFILE for database $DB"
+done
